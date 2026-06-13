@@ -1,0 +1,50 @@
+
+//lexical conventions-any token used in verilog like keywords,identifiers,delimiters,strings,numbers,etc
+
+/*multi
+line
+comment*/
+
+//whitespaces inside strings shows effect
+module tb;
+  
+  //numbers are sized and unsized
+  //sized
+    parameter D1 = 8'b10101010;
+    parameter D2 = 8'o777;
+    parameter D3 = 8'd21;
+    parameter D4 = 8'hAF;
+ 
+  	
+  
+  initial begin
+    $display("\nhello world");
+    $display("%h",8'hax);
+    //unsized
+    $display("unsized %b", 5);       
+    $display("sized %b", 8'd5); 
+  end
+  
+    //data types-nets and variables
+    //nets-wire-connects the two blocks simply
+    //variables-reg-it can store the data-ff
+ 
+    wire aa; //z high impedance as default
+    reg bb;	//x unknown as default
+    integer count; //32 bit-xxxx
+    real tt; //floats ,0.0
+    time hh; // to store simulation time-default x
+    realtime pp; //0 as default
+ 
+    
+ initial begin
+ count=10; 	
+ tt= 0.7; 		
+#10 hh= $time; 			
+
+   $display ("count	= %0d",count);
+   $display ("tt= %f",tt);  
+   $display ("time	= %0t",hh); 
+     
+ end
+ endmodule
