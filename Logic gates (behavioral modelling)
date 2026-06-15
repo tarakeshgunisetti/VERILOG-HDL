@@ -11,3 +11,28 @@ module basic_gates(input a,b,output reg y1,y2,y3,y4,y5,y6,y7);
       y7=~(a^b);
     end  
 endmodule
+
+//testbench
+module tb_gates;
+  wire y1,y2,y3,y4,y5,y6,y7;
+  reg a,b;
+  
+  basic_gates dut(a,b,y1,y2,y3,y4,y5,y6,y7);
+  
+  initial begin
+    $dumpfile("basic_gates.vcd");
+    $dumpvars(0,tb_gates);
+    
+    $monitor("Time=%0t a=%b b=%b | and=%b or=%b not=%b nand=%b nor=%b xor=%b xnor=%b",$time,a,b,y1,y2,y3,y4,y5,y6,y7);
+    
+    a=0;b=0;#1
+    a=0;b=1;#1
+    a=1;b=0;#1
+    a=1;b=1;#1
+    
+    $finish;
+    
+  end
+endmodule
+    
+  
