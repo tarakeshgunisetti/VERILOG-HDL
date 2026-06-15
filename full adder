@@ -1,0 +1,53 @@
+// Code your design here
+// module fa(input a,b,cin,output sum,ca);
+//   assign sum=a^b^cin;
+//   assign ca=a&b | b&cin | cin&a;
+// endmodule
+
+// module fa(input a,b,cin,output reg sum,ca);
+//   always @(a or b or cin)
+//   begin
+//   sum=a^b^cin;
+//   ca=a&b | b&cin | cin&a;
+//   end
+// endmodule
+
+module fa(input a,b,cin,output sum,cout);
+wire y,y1,y2;
+  xor a1(y,a,b);
+  xor a2(sum,y,cin);
+  and a3(y1,a,b);
+  and a4(y2,y,cin);
+  or a5(cout,y1,y2);
+endmodule
+
+
+//testbench
+// Code your testbench here
+// or browse Examples
+// Code your testbench here
+// or browse Examples
+module tb_fa;
+  wire sum,ca;
+  reg a,b,cin;
+  
+  fa dut(a,b,cin,sum,ca);
+  
+  initial begin
+    $dumpfile("fa.vcd");
+    $dumpvars(0,tb_fa);
+    
+    $monitor("time=%0t a=%b b=%b cin=%b sum=%b carry=%b",$time,a,b,cin,sum,ca);
+    
+    cin=0;a=0;b=0;#1
+    cin=0;a=0;b=1;#1
+    cin=0;a=1;b=0;#1
+    cin=0;a=1;b=1;#1
+    cin=1;a=0;b=0;#1
+    cin=1;a=0;b=1;#1
+    cin=1;a=1;b=0;#1
+    cin=1;a=1;b=1;#1
+    $finish;
+    
+  end
+endmodule
