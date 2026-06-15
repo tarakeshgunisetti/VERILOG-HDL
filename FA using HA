@@ -1,0 +1,46 @@
+// Code your design 
+module ha(input a,b,output sum,ca);
+  assign sum=a^b;
+  assign ca=a&b;
+endmodule
+
+// module fa(input a,b,cin,output sum,cout);
+//   wire c0,c1,s0;
+//   ha h1(a,b,s0,c0);
+//   ha h2(s0,cin,sum,c1);
+//   assign cout=c0|c1;
+// endmodule
+
+module fa(input a,b,cin,output sum,cout);
+  wire c0,c1,s0;
+  ha h1(a,b,s0,c0);
+  ha h2(s0,cin,sum,c1);
+  or(cout,c0,c1);
+endmodule
+
+//testbench
+
+module tb_fa;
+  wire sum,ca;
+  reg a,b,cin;
+  
+  fa dut(a,b,cin,sum,ca);
+  
+  initial begin
+    $dumpfile("fa.vcd");
+    $dumpvars(0,tb_fa);
+    
+    $monitor("time=%0t a=%b b=%b cin=%b sum=%b carry=%b",$time,a,b,cin,sum,ca);
+    
+    cin=0;a=0;b=0;#1
+    cin=0;a=0;b=1;#1
+    cin=0;a=1;b=0;#1
+    cin=0;a=1;b=1;#1
+    cin=1;a=0;b=0;#1
+    cin=1;a=0;b=1;#1
+    cin=1;a=1;b=0;#1
+    cin=1;a=1;b=1;#1
+    $finish;
+    
+  end
+endmodule
