@@ -1,0 +1,47 @@
+// Code your design here
+// module hs(input a,b,output diff,bo);
+//   assign diff=a^b;
+//   assign bo=(~a)&b;
+// endmodule
+
+
+// module hs(input a,b,output diff,bo);
+//   wire y;
+//   xor(diff,a,b);
+//   not(y,a);
+//   and(bo,y,b);
+// endmodule
+
+
+
+module hs(input a,b,output reg diff,bo);
+  always @(*)
+    begin
+      diff=a^b;
+      bo=(~a)&b;
+    end
+endmodule
+
+//testbench
+
+module tb_hs;
+  wire diff,bo;
+  reg a,b;
+  
+  hs d(a,b,diff,bo);
+  
+  initial begin
+    $dumpfile("hs.vcd");
+    $dumpvars(0,tb_hs);
+    
+    $monitor("time=%0t a=%b b=%b difference=%b borrow=%b",$time,a,b,diff,bo);
+    
+    a=0;b=0;#1
+    a=0;b=1;#1
+    a=1;b=0;#1
+    a=1;b=1;#1
+    
+    $finish;
+    
+  end
+endmodule
