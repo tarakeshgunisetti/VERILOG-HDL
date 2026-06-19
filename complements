@@ -1,0 +1,19 @@
+module complement#(parameter N)(input [N-1:0] a,output [N-1:0] y);
+  assign y=(a[N-1])?{a[N-1],((~a[N-2:0])+1)}:a;
+endmodule
+
+
+module tb;
+  parameter N=4;
+  wire [N-1:0] y;
+  reg [N-1:0] a;
+  
+  complement #(N)dut(a,y);
+  initial begin
+    $monitor("time=%0t input=%b output=%b",$time,a,y);
+    a=4'b1010;#1
+    a=4'b1111;#1
+    a=4'b0010;#1
+    $finish;
+  end
+endmodule
