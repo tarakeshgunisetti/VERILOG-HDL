@@ -1,0 +1,79 @@
+module mux(input [3:0] i,input [1:0] sel,output  y);
+  assign y=sel[1]?(sel[0]?i[3]:i[2]):(sel[0]?i[1]:i[0]);
+endmodule
+
+module half_adder(input a,b,output sum,carry);
+  mux m1(4'b0110,{a,b},sum);
+  mux m2(4'b1000,{a,b},carry);
+endmodule
+                  
+// module full_adder(input  a,b,c,output sum,carry);
+//   wire yy;
+//   not(yy,a);
+//   mux m0({a,yy,yy,a},{b,c},sum);
+//   mux m1({1'b1,a,a,1'b0},{b,c},carry);
+// endmodule
+
+
+// testbench for mux
+
+//  module tb;
+//    wire y;
+//    reg  [3:0] i;
+//    reg [1:0] sel;
+//    integer j;
+   
+//    mux dut(i,sel,y);
+   
+//    initial begin
+//      $monitor("i=%b sel=%b y=%b",i,sel,y);
+     
+//      for(j=0;j<64;j++)
+//        begin
+//          {i,sel}=j;#1;
+//        end
+//      $finish;
+//    end
+//  endmodule
+
+//testbenchh for half adder
+
+ module tb;
+   wire sum,carry;
+   reg  a,b;
+ 
+   integer j;
+   
+   half_adder dut(a,b,sum,carry);
+   
+   initial begin
+     $monitor("a=%b b=%b  sum=%b carry=%b",a,b,sum,carry);
+     
+     for(j=0;j<4;j++)
+       begin
+         {a,b}=j;#1;
+       end
+     $finish;
+   end
+ endmodule
+
+//testbench for full adder
+
+//  module tb;
+//    wire sum,carry;
+//    reg  a,b,c;
+ 
+//    integer j;
+   
+//    full_adder dut(a,b,c,sum,carry);
+   
+//    initial begin
+//      $monitor("a=%b b=%b c=%b sum=%b carry=%b",a,b,c,sum,carry);
+     
+//      for(j=0;j<8;j++)
+//        begin
+//          {a,b,c}=j;#1;
+//        end
+//      $finish;
+//    end
+//  endmodule
