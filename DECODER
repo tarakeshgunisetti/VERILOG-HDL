@@ -1,0 +1,66 @@
+// decoder 
+
+// module decoder#(parameter N)(input [$clog2(N)-1:0] in,input en,output [N-1:0] y);
+//   assign y=en?1<<in:0;
+// endmodule
+
+module decoder(input [1:0] in,output reg [3:0] out);
+  always @(*)
+    begin
+      case(in)
+        2'b00:out=4'd1;
+        2'b01:out=4'd2;
+        2'b10:out=4'd4;
+        2'b11:out=4'd8;
+        default:out=4'b0;
+      endcase
+    end
+endmodule
+
+
+// Code your testbench here
+// or browse Examples
+// module tb;
+//   parameter N=4;
+//   wire [N-1:0] y;
+//   reg en;
+//   reg [$clog2(N)-1:0] in;
+  
+//   decoder #(N)dut(in,en,y);
+//   integer i;
+//   initial begin
+//     $monitor("time=%0t in=%b en=%b y=%b",$time,in,en,y);
+    
+//     for (i=0;i<=7;i=i+1)
+//       begin
+//         {en,in}=i;
+//         #1;
+//       end
+//     $finish;
+//   end
+// endmodule
+    
+
+
+module tb;
+ 
+  wire [3:0] y;
+  reg [1:0] in;
+  
+  decoder dut(in,y);
+  integer i;
+  initial begin
+    $monitor("time=%0t in=%b y=%b",$time,in,y);
+    
+    for (i=0;i<=3;i=i+1)
+      begin
+        in=i;
+        #1;
+      end
+    $finish;
+  end
+endmodule
+    
+    
+    
+
