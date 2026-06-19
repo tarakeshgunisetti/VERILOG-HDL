@@ -1,0 +1,28 @@
+module FA(input a,b,c,output s,c0);
+  assign {c0,s}=a+b+c;
+endmodule
+module ripple(input [3:0]a,b,output [3:0]s,output c0);
+  wire c1,c2,c3;
+  FA a1(a[0],b[0],0,s[0],c1);
+  FA a2(a[1],b[1],c1,s[1],c2);
+  FA a3(a[2],b[2],c2,s[2],c3);
+  FA a4(a[3],b[3],c3,s[3],c0);
+endmodule
+
+module tb;
+  reg [3:0]a,b;
+  wire [3:0]s;
+  wire c0;
+  ripple dut (a,b,s,c0);
+  initial begin
+    $monitor("time=%0t a=%b b=%b | sum=%b carry=%b ",$time,a,b,s,c0);
+    repeat(10)
+      begin
+        a=$random;
+        b=$random;
+        #1;
+      end
+    $finish;
+  end
+endmodule
+    
