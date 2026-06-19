@@ -1,0 +1,58 @@
+// module mux2x1(input [1:0]in,input sel,output y);
+//   assign y=sel?in[1]:in[0];
+// endmodule
+
+// module mux2x1(input i0,i1,sel,output y);
+//   wire y1,y2,y3;
+//   not(y3,sel);
+//   and a(y1,y3,i0);
+//   and b(y2,sel,i1);
+//   or(y,y1,y2);
+// endmodule
+
+// module mux2x1(input i0,i1,sel,output reg y);
+//   always @(*)
+//   	y=sel?i1:i0;    
+// endmodule
+
+
+module mux#(parameter N=2)(input [N-1:0] in,[$clog2(N)-1:0] sel,output reg y);
+  always @(*)
+    begin
+      y=in[sel];
+    end
+endmodule
+  	
+
+// module mux4_1_with_2_1(input [3:0] in,input [1:0]sel,output y);
+//   wire y1,y2;
+//   wire [1:0] yy;
+//   mux2x1 dut1(in[3:2],sel[0],y1);
+//   mux2x1 dut2(in[1:0],sel[0],y2);
+//   assign yy={y1,y2};
+//   mux2x1 dut3(yy,sel[1],y);
+// endmodule
+
+
+
+module tb_mux;
+  parameter N=4;
+  wire y;
+  reg [3:0] in;
+  reg [1:0] sel;
+  integer i;
+  mux #(N)dut(in,sel,y);
+  initial begin
+    $monitor("Time:%0t in=%b sel=%b | y=%b",$time,in,sel,y);
+    
+    $dumpfile("mux.vcd");
+    $dumpvars(1,tb_mux);
+    for (i=0;i<64;i=i+1)
+     begin
+       {in,sel}=i;#1;
+     end
+    
+    $finish;
+  end
+
+
