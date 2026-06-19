@@ -1,0 +1,41 @@
+// Code your design here
+
+
+// module demux#(parameter N)(input i,input [$clog2(N)-1:0] sel,output reg [N-1:0] y);
+//   always @(sel or i) begin
+//     y[sel]=i;
+//   end
+// endmodule
+    
+//output
+// # KERNEL: time=0 i=1 sel=00 y=xxx1
+// # KERNEL: time=1 i=1 sel=01 y=xx11
+// # KERNEL: time=2 i=1 sel=10 y=x111
+// # KERNEL: time=3 i=1 sel=11 y=1111
+
+//this is wrong method ,as we can see the output are not like the demux,
+
+module demux#(parameter N)(input i,input [$clog2(N)-1:0] sel,output [N-1:0] y);
+  assign y=i<<sel;
+endmodule
+
+
+
+module tb;
+  parameter N=4;
+  wire [N-1:0] y;
+  reg in;
+  reg [$clog2(N)-1:0] sel;
+  
+  demux #(N)dut(in,sel,y);
+  integer i;
+  initial begin
+    $monitor("time=%0t i=%b sel=%b y=%b",$time,in,sel,y);
+    in=1;sel=2'b00;#1
+    in=1;sel=2'b01;#1
+    in=1;sel=2'b10;#1
+    in=1;sel=2'b11;#1
+    
+    $finish;
+  end
+endmodule
