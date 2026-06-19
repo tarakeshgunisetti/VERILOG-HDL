@@ -1,0 +1,29 @@
+module mux(input i0,i1,sel,output y);
+  assign y=sel?i1:i0;
+endmodule
+
+module half_adder(input a,b,output sum,carry);
+  wire y;
+  mux m1(1,0,b,y);
+  mux m2(b,y,a,sum);
+  mux m3(0,b,a,carry);
+endmodule
+
+
+module tb;
+  wire sum,carry;
+  reg a,b;
+  
+  half_adder dut(a,b,sum,carry);
+  initial begin
+    $monitor("A=%b B=%b Sum=%b carry=%b",a,b,sum,carry);
+    
+    a=0;b=0;#1
+    a=0;b=1;#1
+    a=1;b=0;#1
+    a=1;b=1;#1
+    
+    $finish;
+    
+  end
+endmodule
