@@ -1,0 +1,37 @@
+module count_1s#(parameter N)(input [N-1:0] a,output reg y);
+  integer i,count;
+  always @(a)
+    begin
+      count=0;
+      if(a==0)
+        y=0;
+      else begin
+        for(i=0;i<=N-1;i++)
+          begin
+            count=(a[i]==1)?count+1:count;
+          end
+      end
+      
+     //checking
+      y=(count>=N/2)?1:0;
+    end
+endmodule
+
+
+module tb;
+  parameter N=6;
+  wire y;
+  reg [N-1:0] a;
+  
+  count_1s #(N)dut(a,y);
+  
+  initial begin
+    $monitor("time=%0t a=%b y=%b",$time,a,y);
+    
+    a=6'b101010;#1
+    a=6'b111010;#1
+    a=6'b000110;#1
+    a=6'b000011;#1
+    $finish;
+  end
+ endmodule
