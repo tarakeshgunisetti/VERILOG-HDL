@@ -1,0 +1,21 @@
+module bin_gray#(parameter N)(input [N-1:0] a,output [N-1:0] y);
+  assign y={a^(a>>1)};
+endmodule
+
+module tb;
+  parameter N=4;
+  wire [N-1:0] y;
+  reg [N-1:0] a;
+  
+  bin_gray #(N)dut(a,y);
+  initial begin
+    $monitor("Gray code of %b is : %b",a,y);
+    
+    a=4'b1010;#1
+    a=4'b0001;#1
+    a=4'b1110;#1
+    a=4'b1111;
+    
+    $finish;
+  end
+endmodule
