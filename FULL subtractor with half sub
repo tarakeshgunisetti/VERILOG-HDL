@@ -1,0 +1,38 @@
+module hs(input a,b,output diff,bo);
+  assign diff=a^b;
+  assign bo=~a&b;
+endmodule
+
+
+module fs(input a,b,cin,output diff,bo);
+  wire y,q,p;
+  hs h1(a,b,y,q);
+  hs h2(y,cin,diff,p);
+  or(bo,q,p);
+endmodule
+
+
+module tb_fs;
+  wire diff,bo;
+  reg a,b,cin;
+  
+  fs dut(a,b,cin,diff,bo);
+  
+  initial begin
+    $dumpfile("fs.vcd");
+    $dumpvars(1,tb_fs);
+    
+    $monitor("time=%0t a=%b b=%b cin=%b diff=%b borrow=%b",$time,a,b,cin,diff,bo);
+    
+    cin=0;a=0;b=0;#1
+    cin=0;a=0;b=1;#1
+    cin=0;a=1;b=0;#1
+    cin=0;a=1;b=1;#1
+    cin=1;a=0;b=0;#1
+    cin=1;a=0;b=1;#1
+    cin=1;a=1;b=0;#1
+    cin=1;a=1;b=1;#1
+    $finish;
+    
+  end
+endmodule
