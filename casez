@@ -1,0 +1,43 @@
+module casez_example(
+  input  [1:0] data,
+  output reg [3:0] out);
+    
+  always @(*) begin
+    casez(data)
+      2'b0z: out = 1;
+      2'b10: out = 0;
+      2'bz0: out = 2;
+      2'b1z: out = 3;
+      2'bxz: out = 4;
+      
+      2'b0x: out = 5;
+      2'bx0: out = 6;
+      2'b1x: out = 7;
+      2'bx1: out = 8;
+
+//       default: $display("Invalid sel input");
+    endcase
+  end
+endmodule
+
+
+
+module tb;
+  reg [1:0]a;
+  wire [3:0] out;
+  
+        casez_example case_ex(a, out);
+  
+  initial begin
+    $monitor("a = %b -> out = %0h", a, out);
+       a = 2'b1x;
+    #1 a = 2'bx0;
+    #1 a = 2'b1z;
+    #1 a = 2'b?x;    
+    #1 a = 2'b10;
+    #1 a = 2'b00;
+    #1 a = 2'bzz;
+    #1 a = 2'bx1;
+    
+  end
+endmodule
