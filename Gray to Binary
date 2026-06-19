@@ -1,0 +1,32 @@
+module gray_bin#(parameter N)(input [N-1:0] a,output reg [N-1:0] y);
+  integer i;
+  always @(*)
+    begin
+      if(a==0)
+        y=0;
+      else begin
+        y[N-1]=a[N-1];
+          for(i=N-2;i>=0;i--)
+            begin
+              y[i]=y[i+1]^a[i];
+            end
+          end
+         end
+endmodule
+
+
+  module tb;
+  parameter N=4;
+  wire [N-1:0] y;
+  reg [N-1:0] a;
+  
+  gray_bin #(N)dut(a,y);
+  
+  initial begin
+    $monitor("a=%b,y=%b",a,y);
+    a=4'b1010;#1	//1100
+    a=4'b1100;#1	//1000
+    a=4'b0000;#1	//0000
+    $finish;
+  end
+endmodule
