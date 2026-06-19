@@ -1,0 +1,117 @@
+//basic gates using mux logic
+
+// MUx 2x1
+
+module mux(input i0,i1,sel,output y);
+  assign y=sel?i1:i0;
+endmodule
+
+// GATES
+
+module not_gate(input a,output y);
+  mux m1(1,0,a,y);
+endmodule
+
+module and_gate(input a,b,output y);
+  mux m2(0,a,b,y);
+endmodule
+
+module or_gate(input a,b,output y);
+  mux m3(b,1,a,y);
+endmodule
+
+module nand_gate(input a,b,output y);
+  wire yy;
+  mux m3(0,a,b,yy);
+  mux m4(1,0,yy,y);
+endmodule
+
+module nor_gate(input a,b,output y);
+  wire yy;
+  mux m3(b,1,a,yy);
+  mux m4(1,0,yy,y);
+endmodule
+
+module xor_gate(input a,b,output y);
+  wire yy;
+  mux mm(1,0,b,yy);
+  mux m(b,yy,a,y);
+endmodule
+
+module xnor_gate(input a,b,output y);
+  wire yy;
+  mux mm(1,0,b,yy);
+  mux m(yy,b,a,y);
+endmodule
+
+
+// Code your testbench here
+// or browse Examples
+module tb;
+  wire y1,y2,y3,y4,y5,y6,y7;
+  reg a,b;
+  
+  not_gate dut1(a,y1);
+  and_gate dut2(a,b,y2);
+  or_gate dut3(a,b,y3);
+  nand_gate dut4(a,b,y4);
+  nor_gate dut5(a,b,y5);
+  xor_gate dut6(a,b,y6);
+  xnor_gate dut7(a,b,y7);
+  
+  initial begin//basic gates using mux logic
+
+// MUx 2x1
+
+module mux(input i0,i1,sel,output y);
+  assign y=sel?i1:i0;
+endmodule
+
+// GATES
+
+module not_gate(input a,output y);
+  mux m1(1,0,a,y);
+endmodule
+
+module and_gate(input a,b,output y);
+  mux m2(0,a,b,y);
+endmodule
+
+module or_gate(input a,b,output y);
+  mux m3(b,1,a,y);
+endmodule
+
+module nand_gate(input a,b,output y);
+  wire yy;
+  mux m3(0,a,b,yy);
+  mux m4(1,0,yy,y);
+endmodule
+
+module nor_gate(input a,b,output y);
+  wire yy;
+  mux m3(b,1,a,yy);
+  mux m4(1,0,yy,y);
+endmodule
+
+module xor_gate(input a,b,output y);
+  wire yy;
+  mux mm(1,0,b,yy);
+  mux m(b,yy,a,y);
+endmodule
+
+module xnor_gate(input a,b,output y);
+  wire yy;
+  mux mm(1,0,b,yy);
+  mux m(yy,b,a,y);
+endmodule
+
+
+
+    $monitor("A=%b B=%b not_a=%b and=%b or=%b nand=%b nor=%b xor=%b xnor=%b",a,b,y1,y2,y3,y4,y5,y6,y7);
+    a=0;b=0;#1
+    a=0;b=1;#1
+    a=1;b=0;#1
+    a=1;b=1;#1
+    $finish;
+  end
+endmodule
