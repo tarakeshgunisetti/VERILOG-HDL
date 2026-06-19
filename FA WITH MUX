@@ -1,0 +1,42 @@
+// Code your design here
+module mux(input i0,i1,sel,output y);
+  assign y=sel?i1:i0;
+endmodule
+
+module full_adder(input a,b,cin,output sum,carry);
+  wire y1,y2,y3,y5,y6;
+ //sum a xor b
+  mux q(1,0,b,y1);
+  mux w(b,y1,a,y2);
+  //a xor b xor c
+  mux e(1,0,cin,y3);
+  mux r(cin,y3,y2,sum);
+  //carry
+  mux t(0,b,a,y5);
+  //ab
+  mux y(0,y2,cin,y6);
+  //a xor b and cin
+  mux u(y6,1,y5,carry);
+  //final carry
+  
+endmodule
+  
+  // Code your testbench here
+// or browse Examples
+module tb;
+  wire sum,carry;
+  reg a,b,cin;
+  integer i;
+  
+  full_adder dut(a,b,cin,sum,carry);
+  initial begin
+    $monitor("A=%b B=%b cin=%b Sum=%b carry=%b",a,b,cin,sum,carry);
+    for (i=0;i<8;i++)
+      begin
+        {a,b,cin}=i;
+        #1;
+      end
+    $finish;
+    
+  end
+endmodule
