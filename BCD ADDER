@@ -1,0 +1,115 @@
+module bcd_adder(
+    input  [3:0] a,
+    input  [3:0] b,
+    input        cin,
+    output [3:0] sum,
+    output       cout
+);
+
+    wire [4:0] temp_sum;
+    wire [4:0] corrected_sum;
+    wire correction;
+
+    assign temp_sum = a + b + cin;
+
+    assign correction = temp_sum[4] | (temp_sum > 9);
+
+    assign corrected_sum = correction ? (temp_sum + 5'd6) : temp_sum;
+
+    assign sum  = corrected_sum[3:0];
+    assign cout = correction;
+
+endmodule
+
+module bcd_2digit_adder(
+    input  [3:0] a0,  // Ones digit of A
+    input  [3:0] a1,  // Tens digit of A
+    input  [3:0] b0,  // Ones digit of B
+    input  [3:0] b1,  // Tens digit of B
+    output [3:0] s0,  // Ones digit sum
+    output [3:0] s1,  // Tens digit sum
+    output       cout // Hundreds carry
+);
+
+    wire c1;
+
+    // Ones digit addition
+    bcd_adder U1 (
+        .a(a0),
+        .b(b0),
+        .cin(1'b0),
+        .sum(s0),
+        .cout(c1)
+    );
+
+    // Tens digit addition
+    bcd_adder U2 (
+        .a(a1),
+        .b(b1),
+        .cin(c1),
+        .sum(s1),
+        .cout(cout)
+    );
+
+endmodule
+
+
+
+module tb_bcd_2digit_adder;
+
+    reg  [3:0] a0, a1;
+    reg  [3:0] b0, b1;
+
+    wire [3:0] s0, s1;
+    wire       cout;
+
+    // DUT Instantiation
+    bcd_2digit_adder DUT (
+        .a0(a0),
+        .a1(a1),
+        .b0(b0),
+        .b1(b1),
+        .s0(s0),
+        .s1(s1),
+        .cout(cout)
+    );
+
+    initial begin
+        $display(" Time    A     B    Result");
+        $monitor("%4t    %0d%0d   %0d%0d    %0d%0d%0d",
+                  $time, a1, a0, b1, b0, cout, s1, s0);
+
+        // 45 + 38 = 83
+        a1 = 4'd4; a0 = 4'd5;
+        b1 = 4'd3; b0 = 4'd8;
+        #10;
+
+        // 25 + 17 = 42
+        a1 = 4'd2; a0 = 4'd5;
+        b1 = 4'd1; b0 = 4'd7;
+        #10;
+
+        // 99 + 99 = 198
+        a1 = 4'd9; a0 = 4'd9;
+        b1 = 4'd9; b0 = 4'd9;
+        #10;
+
+        // 50 + 50 = 100
+        a1 = 4'd5; a0 = 4'd0;
+        b1 = 4'd5; b0 = 4'd0;
+        #10;
+
+        // 08 + 09 = 17
+        a1 = 4'd0; a0 = 4'd8;
+        b1 = 4'd0; b0 = 4'd9;
+        #10;
+
+        // 00 + 00 = 00
+        a1 = 4'd0; a0 = 4'd0;
+        b1 = 4'd0; b0 = 4'd0;
+        #10;
+
+        $finish;
+    end
+
+endmodule
