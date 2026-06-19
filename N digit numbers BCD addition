@@ -1,0 +1,51 @@
+module FA(input a,b,c,output s,c0);
+  assign {c0,s}=a+b+c;
+endmodule
+
+module rca(input [3:0]a,b,input cin,output [3:0]s,output c0);
+  wire c1,c2,c3;
+  FA a1(a[0],b[0],cin,s[0],c1);
+  FA a2(a[1],b[1],c1,s[1],c2);
+  FA a3(a[2],b[2],c2,s[2],c3);
+  FA a4(a[3],b[3],c3,s[3],c0);
+endmodule	
+
+
+module bcd#(parameter N=2)(input [4*N-1:0] a,b,output [4*N:0] sum);
+  wire [N:0] temp_c;
+  wire [N-1:0]carry,cc;
+  wire [4*N:0] temp_sum;
+  
+  assign temp_c[0]=0;
+  genvar i;
+  generate
+    for(i=0;i<N;i=i+1)
+      begin
+        rca r1(a[4*i+3:4*i],b[4*i+3:4*i],temp_c[i],temp_sum[4*i+3:4*i],carry[i]);
+        assign {cc[i],sum[4*i+3:4*i]}=temp_sum[4*i+3:4*i]+((temp_sum[4*i+3:4*i]>9)||(carry[i]==1)?4'b0110:4'b0000);
+        assign temp_c[i+1]=(temp_sum[4*i+3:4*i]>9)?cc[i]:carry[i];
+      end
+  endgenerate
+  assign sum[4*N]=temp_c[N];
+endmodule
+
+
+
+
+
+module tb;
+  parameter N=2;
+  reg [4*N-1:0] a,b;
+  wire [4*N:0] sum;
+  
+  bcd #(N)DUT(a,b,sum);
+  
+  initial begin
+    $monitor("Time=%0t A=%b B=%b | Sum=%b",$time,a,b,sum);
+    
+    a=8'b10001000;b=8'b01000110;#1
+    a=8'b01000101;b=8'b10010111;#1
+    
+    $finish;
+  end
+endmodule
