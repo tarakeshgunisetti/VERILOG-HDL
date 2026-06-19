@@ -1,0 +1,22 @@
+module encoder#(parameter N=2)(input [N-1:0] in,output [$clog2(N)-1:0]bin);
+  assign bin=(in==0)?'bx:$clog2(in);
+endmodule
+
+module tb;
+  parameter N=4;
+  wire [$clog2(N)-1:0] bin;
+  reg [N-1:0] a;
+  
+  encoder #(N)dut(a,bin);
+  
+  initial begin
+    $monitor("i=%b bin=%b",a,bin);
+    
+    a=4'b1000;#1
+    a=4'b0100;#1
+    a=4'b0010;#1
+    a=4'b0001;#1
+    a=4'b0000;#1
+    $finish;
+  end
+endmodule
