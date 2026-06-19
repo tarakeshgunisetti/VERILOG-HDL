@@ -1,0 +1,43 @@
+module comp #(parameter N=2)(input [N-1:0] a,b,output gt,eq,lt);
+  assign gt=(a>b)?1:0;
+  assign eq=(a==b)?1:0;
+  assign lt=(a<b)?1:0;
+endmodule
+
+
+module tb;
+  wire gt,eq,lt,gt1,eq1,lt1;
+  reg [3:0] a,b;
+  reg [5:0] c,d;
+  
+  comp  #(4)dut1(a,b,gt,eq,lt);
+  comp  #(6)dut2(c,d,gt1,eq1,lt1);
+  
+  initial begin
+    $monitor("time=%0t a=%d b=%d | gt=%b  eq=%b  lt=%b",$time,a,b,gt,eq,lt);
+  end
+  
+  initial begin
+    #3
+    $monitor("time=%0t c=%d d=%d | gt1=%b  eq1=%b  lt1=%b",$time,c,d,gt1,eq1,lt1);
+  end
+  initial begin
+  
+    $dumpfile("comp.vcd");
+    $dumpvars(1,tb);
+    
+    
+   
+  	a=0000;b=0001;#1
+    a=1010;b=1111;#1
+    a=1010;b=1010;#1
+    
+    
+  	c=000011;d=000111;#1
+    c=101110;d=111111;#1
+    c=101000;d=101000;#1
+    
+    
+    $finish;
+  end
+endmodule
