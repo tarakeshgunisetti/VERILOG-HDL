@@ -1,0 +1,32 @@
+module d_latch(input d,en,resetn,output reg q);
+  
+  always @(d or resetn or en)
+    begin
+      if(!resetn)
+        q<=0;
+      else if(en==1)
+        q<=d;
+      
+    end
+endmodule
+ module tb;
+  wire q;
+  reg d,en,resetn;
+  d_latch dut(d,en,resetn,q);
+  
+  initial begin
+    $monitor("resetn=%b en=%b d=%b Q=%b",resetn,en,d,q);
+    
+    resetn=0;
+    en=1;d=1;
+    
+    #1
+    resetn=1;
+    d=1;
+    
+    #1 en=0;d=0;
+    #1 en=1;d=0;
+    #1
+    $finish;
+  end
+endmodule     
