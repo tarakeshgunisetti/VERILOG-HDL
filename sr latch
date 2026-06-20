@@ -1,0 +1,61 @@
+// Code your design here
+module sr_latch(input s,r,en,resetn,output reg  q);
+  always @(*) begin
+    if(!resetn)
+      q<=0;
+    else if(en)
+      begin
+      case({s,r})
+        2'b01:q<=0;
+        2'b10:q<=1;
+        2'b11:q<='bx;
+      endcase
+      end
+  end
+endmodule
+
+// Code your testbench here
+// or browse Examples
+module tb;
+  wire q;
+  reg s,r,resetn,en;
+  
+  sr_latch dut(s,r,en,resetn,q);
+  initial begin
+    $monitor("resetn=%b en=%b s=%b r=%b Q=%b",resetn,en,s,r,q);
+    
+      resetn=0;
+    en=1;s=0;r=0;
+    
+    #1
+    resetn=1;
+    en=1;s=0;r=0;
+    
+    #1
+    resetn=1;
+    en=1;s=1;r=0;
+    
+      #1
+    resetn=1;
+    en=1;s=0;r=0;
+    
+      #1
+    resetn=1;
+    en=1;s=0;r=1;
+    
+        #1
+    resetn=1;
+    en=1;s=1;r=1;
+    
+        #1
+    resetn=1;
+    en=1;s=0;r=0;
+    
+        #1
+    resetn=1;
+    en=0;s=0;r=1;
+ 
+    #1
+    $finish;
+  end
+endmodule
