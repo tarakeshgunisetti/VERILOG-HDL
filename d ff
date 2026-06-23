@@ -1,0 +1,44 @@
+module d_ff(input clk,reset,d,output reg q);
+  always @(posedge clk)
+    begin
+      if(reset)
+        q=0;
+      else 
+        q=d;
+    end
+endmodule
+
+module tb_d;
+  wire q;
+  reg clk,reset,d;
+  d_ff dut(clk,reset,d,q);
+  
+  
+  always #5 clk=~clk;
+  initial begin
+    $dumpfile("d.vcd");
+    $dumpvars(1,tb_d);
+    $monitor(" reset=%b d=%b q=%b",reset,d,q);
+    clk=0;
+     reset = 1; d = 1;   // Apply reset
+    #12;
+
+    reset = 0; d = 1;   // q should become 1 at next posedge
+    #10;
+
+    d = 0;              // q should become 0 at next posedge
+    #10;
+
+    d = 1;              // q should become 1 at next posedge
+    #10;
+
+    reset = 1;          // q should become 0 at next posedge
+    #10;
+
+    reset = 0; d = 1;
+    #10;
+
+    $finish;
+  end
+
+endmodule
