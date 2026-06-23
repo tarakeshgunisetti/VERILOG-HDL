@@ -1,0 +1,38 @@
+module t_latch(input t,reset,output reg  q);
+  always @(*)
+     begin
+       if(reset)
+         q=0;
+       else
+         q=t?~q:q;
+     end
+endmodule
+
+
+module tb_t_latch;
+
+    reg t, reset;
+    wire q;
+
+    t_latch dut (
+        .t(t),
+        .reset(reset),
+        .q(q)
+    );
+
+    initial begin
+        $monitor("Time=%0t reset=%b t=%b q=%b",
+                  $time, reset, t, q);
+
+        reset = 1; t = 0; #10;  // Reset
+        reset = 0; t = 0; #10;  // Hold
+        t = 1;       #10;       // Toggle attempt
+        t = 0;       #10;       // Hold
+        t = 1;       #10;       // Toggle attempt
+        reset = 1;   #10;       // Reset
+        reset = 0; t = 1; #10;  // Toggle attempt
+
+        $finish;
+    end
+
+endmodule
