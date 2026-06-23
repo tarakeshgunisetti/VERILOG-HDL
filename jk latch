@@ -1,0 +1,40 @@
+// Code your design here
+module jk(input j,k,reset,output reg q);
+  always @(*)
+    begin
+      if(reset)
+        q=0;
+      else 
+        begin
+          case({j,k})
+            2'b00:q=q;
+            2'b01:q=0;
+            2'b10:q=1;
+            2'b11:q=~q;
+          endcase
+        end
+    end
+endmodule
+        
+      
+  // Code your testbench here
+// or browse Examples
+module tb;
+  wire q;
+  reg j,k,reset;
+  
+  jk dut(j,k,reset,q);
+  
+  initial begin
+    $monitor("reset=%b j=%b k=%b q=%b",reset,j,k,q);
+    
+    reset = 1; j = 0; k = 0; #10;  // Reset
+
+    reset = 0; j = 1; k = 0; #10;  // Hold
+    j = 0; k = 0; #10;             // Reset Q
+    j = 1; k = 1; #10;             // Set Q
+    j = 0; k = 1; #10;             // Toggle
+    j = 1; k = 1; #10;   
+    $finish;
+  end
+endmodule
