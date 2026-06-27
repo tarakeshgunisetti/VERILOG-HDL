@@ -1,0 +1,67 @@
+// Code your design here
+module t_ff(input clk,reset,t,output reg q);
+  always @(posedge clk)
+    begin
+      if(reset)
+        q=0;
+      else
+        q=t?~q:q;
+    end
+  endmodule
+
+
+
+module tb_t_ff;
+
+  reg clk;
+  reg reset;
+  reg t;
+  wire q;
+  
+  t_ff dut (
+    .clk(clk),
+    .reset(reset),
+    .t(t),
+    .q(q)
+  );
+
+  // Generate clock (10 ns period)
+  initial begin
+    clk = 0;
+    forever #5 clk = ~clk;
+  end
+
+  // Dump file for waveform viewing
+  initial begin
+    $dumpfile("t_ff.vcd");
+    $dumpvars(0, tb_t_ff);
+  end
+
+  // Test stimulus
+  initial begin
+    $display("Time\tclk\treset\tt\tq");
+    $monitor("%0t\t%b\t%b\t%b\t%b",
+              $time, clk, reset, t, q);
+
+    reset = 1; t = 0;   // Reset active
+    #12;
+
+    reset = 0; t = 1;   // Toggle at every posedge
+    #20;
+
+    t = 0;              // Hold state
+    #20;
+
+    t = 1;              // Toggle again
+    #30;
+
+    reset = 1;          // Reset
+    #10;
+
+    reset = 0; t = 1;
+    #20;
+
+    $finish;
+  end
+
+endmodule
