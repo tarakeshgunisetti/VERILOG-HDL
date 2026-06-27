@@ -1,0 +1,40 @@
+module sr_ff(input clk,s,r,reset,output reg q);
+  always @(posedge clk)
+    begin
+    if(reset)
+      q=0;
+    else begin
+      case({s,r})
+        2'b00:q=q;
+        2'b01:q=0;
+        2'b10:q=1;
+        2'b11:q=1'bx;
+      endcase
+    end
+    end
+endmodule
+
+
+module tb_sr;
+  reg clk,s,r,reset;
+  wire q;
+  sr_ff dut(clk,s,r,reset,q);
+  always #5 clk=~clk;
+  initial begin
+    $monitor("clk=%b reset=%b s=%b r=%b q=%b",clk,reset,s,r,q);
+    $dumpfile("sr.vcd");
+    $dumpvars(1,tb_sr);
+    clk=0;
+    {reset,s,r} = 3'b100; #10;
+    {reset,s,r} = 3'b001; #10;
+    {reset,s,r} = 3'b010; #10;
+    {reset,s,r} = 3'b011; #10;
+
+    {reset,s,r} = 3'b000; #10;
+    {reset,s,r} = 3'b101; #10;
+    {reset,s,r} = 3'b110; #10;
+    {reset,s,r} = 3'b111; #10;
+
+    $finish;
+end
+endmodule
