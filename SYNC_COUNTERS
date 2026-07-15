@@ -1,0 +1,63 @@
+// module up_counter#(parameter N=4)(input clk,reset,output reg [N-1:0]q);
+//   always @(posedge clk)
+//     begin
+//       if(reset)
+//         q<=0;
+//       else
+//         q<=q+1;
+//     end
+// endmodule
+
+
+// module down_counter#(parameter N=4)(input clk,reset,output reg [N-1:0]q);
+//   always @(posedge clk)
+//     begin
+//       if(reset)
+//         q<={N{1'b1}};
+//       else
+//         q<=q-1;
+//     end
+// endmodule
+
+
+module up_down_counter#(parameter N=4)(input clk,reset,up_down,output reg [N-1:0]q);
+  always @(posedge clk)
+    begin
+      if(reset)
+        q<=0;
+      else if(up_down==1)
+        q<=q+1;
+      else q<=q-1;
+    end
+endmodule
+
+
+
+//TESTBENCH
+
+module tb;
+  parameter N=5;
+  wire [N-1:0]q;
+  reg clk,reset,up_down;
+  
+  //up_counter #(N)dut(clk,reset,q);
+//    down_counter #(N)dut(clk,reset,q);
+  up_down_counter #(N)dut(clk,reset,up_down,q);
+  always #5 clk=~clk;
+  
+  initial begin
+    $monitor("clk=%b reset=%b count=%b",clk,reset,q);
+    $dumpfile("counter.vcd");
+    $dumpvars(1,tb);
+    
+    clk=0;reset=1;up_down=1;
+    
+    #15 reset=0;
+    
+    #((2**N)*10) up_down=0;
+    
+    #((2**N)*10) $finish;
+  end
+endmodule
+    
+    
