@@ -1,0 +1,159 @@
+module t_ff(input clk,reset,t,output reg q);
+  always @(posedge clk or posedge  reset)
+    begin
+      if(reset)
+        q=0;
+      else
+        q=t?~q:q;
+    end
+  endmodule
+
+// module up_counter(input clk,reset,output [2:0]q);
+
+//   t_ff a(clk,reset,1'b1,q[0]);
+//   t_ff b(~q[0],reset,1'b1,q[1]);
+//       t_ff c(~q[1],reset,1'b1,q[2]);
+// endmodule
+
+
+// module down_counter(input clk,reset,up_down,output [2:0]q);
+// wire s,d;
+//   reg up_down_r;
+  
+//   always @(posedge clk) begin
+//         if (reset)
+//             up_down_r <= 1'b0;
+//         else
+//             up_down_r <= up_down;
+//     end
+
+
+//   assign {s,d}=up_down_r?{~q[0],~q[1]}:{q[0],q[1]};
+//   	t_ff a(clk,reset,1'b1,q[0]);
+//     t_ff b(s,reset,1'b1,q[1]);
+//     t_ff c(d,reset,1'b1,q[2]);
+// endmodule
+
+
+module async_up(input clk,reset,up_down,output reg [2:0]q);
+  wire s,d;
+   
+  assign {s,d}=up_down?{~q[0],~q[1]}:{q[0],q[1]};
+  always @(posedge clk or posedge reset)
+    begin
+    if(reset)
+      q[0]<=0;
+  	else
+      q[0]<=~q[0];
+    end
+  
+  always @(posedge s or posedge reset)
+    begin
+    if(reset)
+      q[1]<=0;
+  	else
+      q[1]<=~q[1];
+    end
+  
+    
+  always @(posedge d or posedge reset)
+    begin
+    if(reset)
+      q[2]<=0;
+  	else
+      q[2]<=~q[2];
+    end
+endmodule
+
+
+//TESTBENCH
+
+// module tb;
+
+//     reg clk, reset, up_down;
+//     wire [2:0] q;
+
+//     down_counter dut (
+//         .clk(clk),
+//         .reset(reset),
+//         .up_down(up_down),
+//         .q(q)
+//     );
+
+//     initial begin
+//         $dumpfile("dump.vcd");
+//         $dumpvars(0, tb);
+
+//         clk = 0;
+//         reset = 1;
+//         up_down = 0;      // Up count
+
+//         #12 reset = 0;
+
+//         // Count up: 0→1→2→3→4→5→6→7→0
+//         #90;
+
+//         // Change direction between clock edges
+//         up_down = 1;      // Down count
+
+//         // Count down: 7→6→5→4→3→2→1→0
+//         #90;
+
+//         $finish;
+//     end
+
+//     always #5 clk = ~clk;
+
+//     initial begin
+//         $monitor("Time=%0t up_down=%b q=%0d (%b)",
+//                   $time, up_down, q, q);
+//     end
+
+// endmodule
+
+module tb;
+
+    reg clk, reset, up_down;
+    wire [2:0] q;
+
+    async_up dut (
+        .clk(clk),
+        .reset(reset),
+        .up_down(up_down),
+        .q(q)
+    );
+
+    // Clock generation
+    always #5 clk = ~clk;
+
+    initial begin
+        $dumpfile("dump.vcd");
+        $dumpvars(0, tb);
+
+        clk = 0;
+        reset = 1;
+        up_down = 0;   // Up counting
+
+        // Apply reset
+      @(posedge clk);
+        reset = 0;
+
+        // Count UP for 8 clock cycles
+      repeat (9) @(posedge clk);
+
+        // Change direction
+        up_down = 1;
+
+        // Count DOWN for 8 clock cycles
+        repeat (8) @(posedge clk);
+
+     
+        $finish;
+    end
+
+    initial begin
+        $display("Time\tup_down\tq");
+        $monitor("%0t\t%b\t\t%0d", $time, up_down, q);
+    end
+
+endmodule
