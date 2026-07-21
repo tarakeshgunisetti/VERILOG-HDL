@@ -1,0 +1,86 @@
+module piso(input clk,rst,sel,input [10:0]pin,output reg sout);
+  reg [10:0]q;
+always @(posedge clk or posedge rst) begin
+    if (rst) begin
+        q    <= 11'd0;
+        sout <= 1'b0;
+    end
+    else if (sel) begin
+        q    <= pin;
+        sout <= pin[10];
+    end
+    else begin
+
+      {sout,q}<={q[10],q<<1};
+    end
+end
+  
+endmodule
+
+
+
+module tx_shift_tb;
+
+reg clk;
+reg rst;
+reg sel;
+reg [10:0] pin;
+wire sout;
+
+piso dut(
+    .clk(clk),
+    .rst(rst),
+    .sel(sel),
+    .pin(pin),
+    .sout(sout)
+);
+
+// Clock generation
+initial begin
+    clk = 0;
+    forever #5 clk = ~clk;
+end
+
+// Stimulus
+initial begin
+
+    rst = 1;
+    sel = 0;
+    pin = 11'd0;
+
+    // Release reset
+    #12;
+    rst = 0;
+
+    //---------------- First Data ----------------
+    pin = 11'b10110011010;
+    sel = 1;
+
+    @(posedge clk);
+    sel = 0;
+
+    repeat(11)
+        @(posedge clk);
+
+    //---------------- Second Data ----------------
+    pin = 11'b11100011100;
+    sel = 1;
+
+    @(posedge clk);
+    #1 sel = 0;
+
+    repeat(11)
+        @(posedge clk);
+
+    #20;
+    $finish;
+end
+
+// Monitor
+initial begin
+   
+    $monitor("%0t\t%b\t%b\t%b\t%b\t%b",
+             $time, rst, sel,pin, dut.q, sout);
+end
+
+endmodule
