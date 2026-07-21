@@ -20,11 +20,13 @@
 module fs(a,b,cin,diff,bo);
   input wire a,b,cin;
   output diff,bo;
-  wire y,y1,y2;
+  wire y,y1,y2,ab,yb;
   xor a1(y,a,b);
   xor b1(diff,y,cin);
-  not a11(y1,a);
-  not b11(y2,y);
+  not a11(ab,a);
+  and a21(y1,ab,b);
+  not b11(yb,y);
+  and b21(y2,yb,cin)
   or(bo,y1,y2);
 endmodule
 
