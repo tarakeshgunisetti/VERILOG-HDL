@@ -47,3 +47,43 @@ parameter S0 = 6'd0,
     end
   assign num=state[3:0];
 endmodule
+
+
+// Code your testbench here
+// or browse Examples
+`timescale 1ns/1ps
+
+module tb;
+
+    reg clk;
+    reg rst;
+    wire [3:0] num;
+
+    ph_gen dut (
+        .clk(clk),
+        .rst(rst),
+        .num(num)
+    );
+
+    // Clock generation
+    initial clk = 0;
+    always #5 clk = ~clk;
+
+    initial begin
+        $dumpfile("ph_gen.vcd");
+        $dumpvars(0, tb);
+
+        $monitor("Time=%0t rst=%b num=%0d",
+                  $time, rst, num);
+
+        rst = 1;
+        #15
+
+        rst = 0;
+
+        // Run for some clock cycles
+        #100;
+
+        $finish;
+    end
+endmodule
