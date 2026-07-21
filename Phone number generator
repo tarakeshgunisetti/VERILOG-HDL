@@ -1,0 +1,49 @@
+module ph_gen(
+    input clk,
+    input rst,
+  output [3:0] num
+);
+
+parameter S0 = 6'd0,
+          S1 = 6'd1,
+          S2 = 6'd3,
+          S3 = 6'd4,
+          S4 = 6'd5,
+          S5 = 6'd7,
+          S6 = 6'd9,
+          S7 = 6'd20,
+          S8 = 6'd36,
+          S9 = 6'd25,
+  		  S10 =6'd23;
+
+  reg [5:0] nstate,state;
+
+    // State Register
+    always @(posedge clk or posedge rst)
+    begin
+        if (rst)
+            state <= S0;
+        else
+            state <= nstate;
+    end
+
+    // Next-State Logic
+    always @(*)
+    begin
+        case (state)
+            S0: nstate = S6;
+            S1: nstate = S9;
+            S2: nstate = S3;
+            S3: nstate = S5;
+            S4: nstate = S8;
+            S5: nstate = S7;
+            S6: nstate = S2;
+            S7: nstate = S10;
+            S8: nstate = S1;
+            S9: nstate = S0;
+           S10: nstate = S4;
+            default: nstate = S0;
+        endcase
+    end
+  assign num=state[3:0];
+endmodule
