@@ -1,0 +1,39 @@
+module siso#(parameter N=4)(input din,clk,reset,output reg dout);
+  reg [N-1:0]q;
+  always @(posedge clk)
+    begin
+      if(reset)
+        begin
+        q<='bx;
+        dout<=1'bx;
+        end
+      else
+        begin
+          dout=q[0];
+          q[N-1:0]<={din,q[N-1:1]};
+        end
+    end
+endmodule
+      
+  module tb_siso;
+  parameter N=4;
+  wire dout;
+  reg din,reset,clk;
+  
+  siso #(N)dut(din,clk,reset,dout);
+  
+  always #5 clk=~clk;
+  initial begin
+  $dumpfile("siso.vcd");
+  $dumpvars(1,tb_siso);
+             
+    clk=0;reset=1;din=0;
+    #10 reset=0;din=1;
+    #10 din=0;
+    #10 din=0;
+    #10 din=1;
+    #10 din=1;
+    #10 din=0;
+    #100 $finish;
+  end
+endmodule
