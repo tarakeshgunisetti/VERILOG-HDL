@@ -1,0 +1,67 @@
+module mealy_1101(input clk,rst,din,output reg done);
+  parameter s0=2'b00,s1=2'b01,s2=2'b10,s3=2'b11;
+  reg [1:0] ps,ns;
+  
+  //flipflop logic
+  
+  always @(posedge clk or posedge rst)
+    begin
+      if(rst)
+        begin
+          ps<=s0; 
+        end
+      else
+        ps<=ns;
+    end
+  
+  //next  state logic
+  
+  always @(ps or din)
+    begin
+      case(ps)
+        s0:ns<=din?s1:s0;
+        s1:ns<=din?s2:s0;
+        s2:ns<=din?s2:s3;
+        s3:ns<=din?s1:s0;
+      endcase
+    end
+  
+  // output logic
+  
+  always @(ps or din)
+    begin
+      if(ps==s3 && din==1)
+        done<=1;
+      else
+        done<=0;
+    end
+  
+endmodule
+
+
+module tb;
+  wire done;
+  reg clk,rst,din;
+  
+  mealy_1101 dut(.*);
+  
+  always #5 clk=~clk;
+  initial begin
+    $monitor("Time=%0t  rst=%b din=%b state=%d nstate=%d done=%b",$time,rst,din,dut.ps,dut.ns,done);
+    
+    $dumpfile("mealy.vcd");
+    $dumpvars(0,tb);
+    
+    clk=0;rst=1;
+    #5 rst=0;din=1;
+    #10 din=1;
+    #10 din=0;
+    #10 din=1;
+    #10 din=1;
+    #10 din=0;
+    #10 din=1;
+    #5 $finish;
+  end
+endmodule
+    
+    
